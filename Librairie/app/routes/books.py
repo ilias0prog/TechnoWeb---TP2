@@ -5,9 +5,24 @@ from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 from app.schemas import books
 import app.services.books as service
+from Librairie.Templates import *
+from fastapi import Request
+from fastapi.templating import Jinja2Templates
+
+
+templates = Jinja2Templates(directory="templates")
 
 # Define the router for books
 router = APIRouter(prefix="/books", tags=["Books"])
+
+#################################################
+def show_home_page(request: Request):
+    return templates.TemplateResponse(request, "home.html", context={"message": "Hello World"})
+
+@router.get('/testing/{test}')
+def test(test):
+    return templates.TemplateResponse("main.html", {"request": Request, "test": test})
+#################################################
 
 # Define a GET route to retrieve all books
 @router.get('/list')
