@@ -16,6 +16,7 @@ templates = Jinja2Templates(directory="templates")
 router = APIRouter(prefix="/books", tags=["Books"])
 
 #################################################
+@router.get("/")
 def show_home_page(request: Request):
     return templates.TemplateResponse(request, "home.html", context={"message": "Hello World"})
 
