@@ -1,9 +1,10 @@
 # Import necessary modules and classes
 from typing import Annotated
+from fastapi.responses import RedirectResponse
 from fastapi import APIRouter, HTTPException, status, Request, Form
 from uuid import uuid4
 from fastapi import APIRouter, HTTPException, status
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse
 from pydantic import ValidationError
 from Librairie.app.schemas import books
 import Librairie.app.services.books as service
@@ -31,7 +32,7 @@ def test(test):
 #################################################
 
 # Define a GET route to retrieve all books
-@router.get('/list')
+@router.get('/all')
 def get_all_books(request: Request):
     """
     Retrieve all books.
@@ -52,8 +53,8 @@ def ask_to_create_new_book(request: Request):
         context={'request': request}
     )
 
-@router.post('/add{name}/{author}/{editor}')
-def add_book(name: Annotated[str, Form()], author: Annotated[str, Form()], editor: Annotated[str, Form()]) -> JSONResponse:
+@router.post('/new')
+def add_book(name: Annotated[str, Form()], author: Annotated[str, Form()], editor: Annotated[str, Form()]) :
     """
     Adds a new book to the library.
 
@@ -86,51 +87,58 @@ def add_book(name: Annotated[str, Form()], author: Annotated[str, Form()], edito
             detail=e.errors(),
         )
     service.save_book(new_book)  # Save the validated book
-    return JSONResponse(new_book.model_dump())
+    return RedirectResponse(url="/books/all", status_code=302)
 
 
-@router.post('/update/{id}')
-def update_book(id, name: str = None, author: str = None, editor: str = None) -> JSONResponse:
-    """
-    Update a book with the given ID.
+@router.get('/update/}', response_class=HTMLResponse)
+def update_book_form(request: Request, id: str):
+    book =  service.get_book_by_id(id)
+    return templates.TemplateResponse("update_book.html", {"request": request, "book": book})
 
-    Args:
-        id (int): The ID of the book to update.
-        name (str, optional): The new name of the book. Defaults to None.
-        author (str, optional): The new author of the book. Defaults to None.
-        editor (str, optional): The new editor of the book. Defaults to None.
-
-    Returns:
-        JSONResponse: The response containing the message and updated book data.
-
-    Raises:
-        HTTPException: If the book with the given ID does not exist.
-        ValueError: If no fields are provided to update or if any field is filled with spaces only.
-    """
-    if (name,author,editor) == (None,None,None):
-        raise ValueError("At least one of the fields (name/author/editor) should be provided for updating.")
+@router.post('/update/', response_class=HTMLResponse)
+def update_book(
+    request: Request,
+    id: str,
+    name: str = Form(None),
+    author: str = Form(None),
+    editor: str = Form(None)
+):
     try:
         book = service.get_book_by_id(id)
     except:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="The book with the given id does not exist."
-        )    
-    if (name is None and author is None and editor is None):
-        raise ValueError("At least one field must be provided to update.")
-    service.check_input_validity(name,author,editor)  
+        )
+
+    if (name, author, editor) == (None, None, None):
+        raise ValueError("At least one of the fields (name/author/editor) should be provided for updating.")
+
+    service.check_input_validity(name, author, editor)
+    
     updated_fields = {
-        "id" : id,
+        "id": id,
         "name": name,
         "author": author,
         "editor": editor
     }
+    
     service.update_book_data(updated_fields)
-    return JSONResponse(content={"message": "Book updated successfully", "data": updated_fields})
+    
+    return templates.TemplateResponse("update_book.html", {"request": request, "message": "Book updated successfully", "book": updated_fields})
 
 
-@router.post('/delete/{id}')
-def delete_book(id : str) -> JSONResponse:
+
+
+@router.get('/delete')
+def ask_to_delete_book(request : Request):
+    return templates.TemplateResponse(
+        "new_task.html",
+        context={"request": request}
+    )
+
+@router.post('/delete{id}', response_class=HTMLResponse)
+def delete_book(request :Request):
     """
     Deletes a book with the given id from the library.
 
@@ -150,4 +158,4 @@ def delete_book(id : str) -> JSONResponse:
         detail="The book with the given id does not exist."
     )
     service.delete_book_data(id)
-    return JSONResponse(content={"message": "Successfully deleted book", "data": book})
+    return RedirectResponse(url="/books/delete")
