@@ -1,4 +1,6 @@
 # Import necessary modules and classes
+from typing import Annotated
+from fastapi import APIRouter, HTTPException, status, Request, Form
 from uuid import uuid4
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import JSONResponse
@@ -27,7 +29,7 @@ def test(test):
 
 # Define a GET route to retrieve all books
 @router.get('/list')
-def get_all_books():
+def get_all_books(request: Request):
     """
     Retrieve all books.
 
@@ -35,14 +37,20 @@ def get_all_books():
         JSONResponse: The response containing the list of all books.
     """
     books = service.get_all_books()
-    return JSONResponse(
-        content={"books":[book.model_dump() for book in books]},
-        status_code=200,
+    return templates.TemplateResponse(
+        "tasks.html",
+        context={'request': request, 'books': books}
     )
 
+@router.get('/new')
+def ask_to_create_new_book(request: Request):
+    return templates.TemplateResponse(
+        "new_book.html",
+        context={'request': request}
+    )
 
 @router.post('/add{name}/{author}/{editor}')
-def add_book(name: str, author: str, editor: str) -> JSONResponse:
+def add_book(name: Annotated[str, Form()], author: Annotated[str, Form()], editor: Annotated[str, Form()]) -> JSONResponse:
     """
     Adds a new book to the library.
 
