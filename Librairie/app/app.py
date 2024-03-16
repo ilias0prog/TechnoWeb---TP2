@@ -13,7 +13,7 @@ app.include_router(book_router)
 @app.get("/", response_class=HTMLResponse)
 async def read_main(request: Request):
     # Renvoyer la réponse HTML en utilisant le modèle index.html
-    return templates.TemplateResponse("homepage.html", {"request": request})
+    return templates.TemplateResponse("all_books.html", {"request": request})
 
 @app.on_event('startup')
 def on_startup():

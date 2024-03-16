@@ -1,12 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add a book</title>
-</head>
-<body>
-    <h1>New Book ok</h1>
-</body>
-</html>
+{% extends "empty_page.html" %}
+
+{% block content %}
+
+<h1>Ajouter un nouveau livre</h1>
+
+<form action="/books/new" method="post">
+
+    <div class="form-group">
+        <label for="book_name">Titre du livre</label>
+        <input type="text" class="form-control" id="book_name"
+               name="name"/>
+    </div>
+
+    <div class="form-group">
+        <label for="author_name">Auteur du livre</label>
+        <input type="text" class="form-control" id="author_name"
+               name="author"/>
+    </div>
+    <div class="form-group">
+        <label for="editor_name">Nom de l'éditeur</label>
+        <input type="text" class="form-control" id="editor_name"
+               name="editor"/>
+    </div>
+
+
+    <button type="submit" class="btn btn-success my-4">Ajouter le livre</button>
+
+</form>
+
+<div>
+    <a class="btn btn-outline-dark mx-2" href="/books/all">Retour</a>
+</div>
+
+{% endblock %}

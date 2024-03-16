@@ -20,7 +20,7 @@ router = APIRouter(prefix="/books", tags=["Books"])
 
 
 # Define a GET route to retrieve all books
-@router.get('/all')
+@router.get('/')
 def get_all_books(request: Request):
     """
     Retrieve all books.
@@ -75,7 +75,7 @@ def add_book(name: Annotated[str, Form()], author: Annotated[str, Form()], edito
             detail=e.errors(),
         )
     service.save_book(new_book)  # Save the validated book
-    return RedirectResponse(url="/books/all", status_code=302)
+    return RedirectResponse(url="/books/", status_code=302)
 
 
 @router.get('/update', response_class=HTMLResponse)
@@ -83,9 +83,9 @@ def update_book_form(request: Request):
     book =  service.get_book_by_id(id)
     return templates.TemplateResponse("update_book.html", context= {"request": request, "id": book.id, "name": book.name, "author": book.author, "editor": book.editor})
 
-@router.post('/update', response_class=HTMLResponse)
+@router.post('/update{id}', response_class=HTMLResponse)
 def update_book(
-    request: Request,
+    id: str,
     name: Annotated[str, Form(None)], author: Annotated[str, Form(None)], editor: Annotated[str, Form(None)]
 ):
     try:
@@ -110,7 +110,7 @@ def update_book(
     
     service.update_book_data(updated_fields)
     
-    return RedirectResponse(url="/books/all")
+    return RedirectResponse(url="/books/")
 
 
 
@@ -123,7 +123,7 @@ def ask_to_delete_book(request : Request):
     )
 
 @router.post('/delete{id}', response_class=HTMLResponse)
-def delete_book(request :Request):
+def delete_book(id : str):
     """
     Deletes a book with the given id from the library.
 
@@ -146,7 +146,7 @@ def delete_book(request :Request):
     return RedirectResponse(url="/books/delete")
 
 @router.post('/delete/{id}', response_class=HTMLResponse)
-def delete_book(id: str, request: Request):
+def delete_book(id: str ):
     """
     Deletes a book with the given id from the library.
 
@@ -166,7 +166,4 @@ def delete_book(id: str, request: Request):
             detail="The book with the given id does not exist."
         )
     service.delete_book_data(id)
-    # Create a message indicating success
-    message = f"The book with id {id} has been successfully deleted."
-    # Return a simple HTML response indicating success
-    return HTMLResponse(content=f"<p>{message}</p>")
+    return RedirectResponse(url="/books/")
