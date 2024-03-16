@@ -30,7 +30,7 @@ def get_all_books(request: Request):
     """
     books = service.get_all_books()
     return templates.TemplateResponse(
-        "books.html",
+        "all_books.html",
         context={'request': request, 'books': books}
     )
 
@@ -78,18 +78,15 @@ def add_book(name: Annotated[str, Form()], author: Annotated[str, Form()], edito
     return RedirectResponse(url="/books/all", status_code=302)
 
 
-@router.get('/update/}', response_class=HTMLResponse)
-def update_book_form(request: Request, id: str):
+@router.get('/update', response_class=HTMLResponse)
+def update_book_form(request: Request):
     book =  service.get_book_by_id(id)
-    return templates.TemplateResponse("update_book.html", {"request": request, "book": book})
+    return templates.TemplateResponse("update_book.html", context= {"request": request, "id": book.id, "name": book.name, "author": book.author, "editor": book.editor})
 
-@router.post('/update/', response_class=HTMLResponse)
+@router.post('/update', response_class=HTMLResponse)
 def update_book(
     request: Request,
-    id: str,
-    name: str = Form(None),
-    author: str = Form(None),
-    editor: str = Form(None)
+    name: Annotated[str, Form(None)], author: Annotated[str, Form(None)], editor: Annotated[str, Form(None)]
 ):
     try:
         book = service.get_book_by_id(id)
@@ -113,7 +110,7 @@ def update_book(
     
     service.update_book_data(updated_fields)
     
-    return templates.TemplateResponse("update_book.html", {"request": request, "message": "Book updated successfully", "book": updated_fields})
+    return RedirectResponse(url="/books/all")
 
 
 
@@ -121,7 +118,7 @@ def update_book(
 @router.get('/delete')
 def ask_to_delete_book(request : Request):
     return templates.TemplateResponse(
-        "new_task.html",
+        "delete_book.html",
         context={"request": request}
     )
 
@@ -147,3 +144,29 @@ def delete_book(request :Request):
     )
     service.delete_book_data(id)
     return RedirectResponse(url="/books/delete")
+
+@router.post('/delete/{id}', response_class=HTMLResponse)
+def delete_book(id: str, request: Request):
+    """
+    Deletes a book with the given id from the library.
+
+    Args:
+        id (str): The id of the book to be deleted.
+    Raises:
+        HTTPException: If the book with the given ID does not exist.
+
+    Returns:
+        HTMLResponse: A HTML response indicating the success of the deletion operation.
+    """
+    try:
+        book = service.get_book_by_id(id)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="The book with the given id does not exist."
+        )
+    service.delete_book_data(id)
+    # Create a message indicating success
+    message = f"The book with id {id} has been successfully deleted."
+    # Return a simple HTML response indicating success
+    return HTMLResponse(content=f"<p>{message}</p>")
