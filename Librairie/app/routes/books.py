@@ -143,7 +143,7 @@ def delete_book(id : str):
         detail="The book with the given id does not exist."
     )
     service.delete_book_data(id)
-    return RedirectResponse(url="/books/delete")
+    return RedirectResponse(url="/books/delete") 
 
 @router.post('/delete/{id}', response_class=HTMLResponse)
 def delete_book(id: str ):
