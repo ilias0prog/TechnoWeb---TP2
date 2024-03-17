@@ -1,7 +1,7 @@
 {% extends "empty_page.html" %}
 
 {% block content %}
-<form action="/books/update{{id}}" method="post">
+<form action="/books/update/{id}" method="put">
     <div class="form-group">
         <label for="name">Name:</label><br>
         <input type="text" id="name" name="name" value="{{ name }}"><br>
@@ -22,5 +22,4 @@
 <div>
     <a class="btn btn-outline-dark mx-2" href="/books/all">Retour</a>
 </div>
-
-{% block content %}
+{% endblock %}
