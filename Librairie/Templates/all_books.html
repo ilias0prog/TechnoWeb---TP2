@@ -1,12 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All the books</title>
-</head>
-<body>
-    <h1>Books ok</h1>
-</body>
-</html>
+{% extends "empty_page.html" %}
+{% from "macro.html" import show_book %}
+
+{% block content %}
+
+<div class="container">
+    <table class="table">
+        <tr>
+            <th>Modifier</th>
+            <th>Supprimer</th>
+            <th>Titre</th>
+            <th>Auteur</th>
+            <th>Editeur</th>
+        </tr>
+        {% for book in books %}
+        {{ show_book(book.name, book.author, book.editor) }}
+        {% endfor %}
+    </table> 
+</div>
+
+<div>
+    <a class="btn btn-outline-success mx-4" href="/books/new">Ajouter un nouveau livre</a>
+</div>
+
+{% endblock %}

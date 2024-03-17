@@ -1,12 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update a book</title>
-</head>
-<body>
-    <h1>Update ok</h1>
-</body>
-</html>
+{% extends "empty_page.html" %}
+
+{% block content %}
+<form action="/books/update{{id}}" method="post">
+    <div class="form-group">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" value="{{ name }}"><br>
+    </div>
+    <div>
+        <label for="author">Author:</label><br>
+        <input type="text" id="author" name="author" value="{{ author }}"><br>
+    </div>
+    <div>
+        <label for="editor">Editor:</label><br>
+        <input type="text" id="editor" name="editor" value="{{ editor }}"><br>
+    </div>
+    <div>
+        <input type="submit" value="Update Book">
+    </div>
+</form>
+
+<div>
+    <a class="btn btn-outline-dark mx-2" href="/books/all">Retour</a>
+</div>
+
+{% block content %}
