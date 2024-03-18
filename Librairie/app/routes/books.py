@@ -81,7 +81,7 @@ def add_book(name: Annotated[str, Form()], author: Annotated[str, Form()], edito
 def update_book_form(request: Request, id: str):
     try:
         book = service.get_book_by_id(id)
-        return templates.TemplateResponse("update_book.html", context={"request": request, "book": book})
+        return templates.TemplateResponse("update_book.html", context={"request": request, "id": book.id, "name": book.name, "author": book.author, "editor": book.editor})
     except:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -89,15 +89,9 @@ def update_book_form(request: Request, id: str):
         )
 
 # Route pour traiter la soumission du formulaire de mise à jour du livre
-@router.put('/update/{id}', response_class=HTMLResponse)
+@router.post('/update/{id}', response_class=HTMLResponse)
 def update_book(id: str , name: Optional[str] = Form(None), author: Optional[str] = Form(None), editor: Optional[str] = Form(None)):
-    try:
-        book = service.get_book_by_id(id)
-    except:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="The book with the given id does not exist."
-        )
+    
 
     if name is None and author is None and editor is None:
         raise ValueError("At least one of the fields (name/author/editor) should be provided for updating.")
