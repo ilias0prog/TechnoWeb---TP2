@@ -1,0 +1,18 @@
+{% macro show_book(name, author, editor) %}
+    <tr>
+        <td>
+            <a class="btn btn-outline-dark mx-2" href="/books/update/{{ id }}">Modifier</a>
+        </td>
+
+        <td>
+        <a class="btn btn-outline-dark mx-2" href="/books/delete/{{ id }}">Supprimer</a>
+
+        </td>
+
+        <td>{{ name }}</td>
+        
+        <td>{{ author }}</td>
+
+        <td>{{ editor }}</td>
+    </tr>
+{% endmacro %}

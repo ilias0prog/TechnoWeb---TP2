@@ -20,7 +20,7 @@ router = APIRouter(prefix="/books", tags=["Books"])
 
 
 # Define a GET route to retrieve all books
-@router.get('/')
+@router.get('/all')
 def get_all_books(request: Request):
     """
     Retrieve all books.
@@ -67,7 +67,7 @@ def add_book(name: Annotated[str, Form()], author: Annotated[str, Form()], edito
         "editor": editor,
     }     
     try:
-        new_book = books.BaseModel(new_book_data)
+        new_book = books.Book(**new_book_data)
           
     except ValidationError as e:
         raise HTTPException(
@@ -75,19 +75,16 @@ def add_book(name: Annotated[str, Form()], author: Annotated[str, Form()], edito
             detail=e.errors(),
         )
     service.save_book(new_book)  # Save the validated book
-    return RedirectResponse(url="/books/", status_code=302)
+    return RedirectResponse(url="/books/all", status_code=302)
 
 
-@router.get('/update', response_class=HTMLResponse)
-def update_book_form(request: Request):
+@router.get('/update{id}', response_class=HTMLResponse)
+def update_book_form(request: Request, id: str):
     book =  service.get_book_by_id(id)
     return templates.TemplateResponse("update_book.html", context= {"request": request, "id": book.id, "name": book.name, "author": book.author, "editor": book.editor})
 
 @router.post('/update{id}', response_class=HTMLResponse)
-def update_book(
-    id: str,
-    name: Annotated[str, Form(None)], author: Annotated[str, Form(None)], editor: Annotated[str, Form(None)]
-):
+def update_book( id: str,name: Annotated[str, Form()], author: Annotated[str, Form()], editor: Annotated[str, Form()]):
     try:
         book = service.get_book_by_id(id)
     except:
@@ -110,40 +107,14 @@ def update_book(
     
     service.update_book_data(updated_fields)
     
-    return RedirectResponse(url="/books/")
+    return RedirectResponse(url="/books/all")
 
-
-
-
-@router.get('/delete')
+@router.get('/delete/{id}')
 def ask_to_delete_book(request : Request):
     return templates.TemplateResponse(
         "delete_book.html",
         context={"request": request}
     )
-
-@router.post('/delete{id}', response_class=HTMLResponse)
-def delete_book(id : str):
-    """
-    Deletes a book with the given id from the library.
-
-    Args:
-        id (str): The id of the book to be deleted.
-    Raises:
-        HTTPException: If the book with the given ID does not exist.
-
-    Returns:
-        JSONResponse: A JSON response indicating the success of the deletion operation.
-    """
-    try:
-        book = service.get_book_by_id(id)
-    except:
-        raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail="The book with the given id does not exist."
-    )
-    service.delete_book_data(id)
-    return RedirectResponse(url="/books/delete") 
 
 @router.post('/delete/{id}', response_class=HTMLResponse)
 def delete_book(id: str ):
@@ -166,4 +137,4 @@ def delete_book(id: str ):
             detail="The book with the given id does not exist."
         )
     service.delete_book_data(id)
-    return RedirectResponse(url="/books/")
+    return RedirectResponse(url="/books/all")
