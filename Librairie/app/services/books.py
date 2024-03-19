@@ -65,7 +65,13 @@ def save_book(new_book: Book) -> Book:
     Returns:
         Book: The saved book object.
     """
-    bookstore["books"].append(new_book)
+    book = {
+        "id" : new_book.id,
+        "name" : new_book.name,
+        "author" : new_book.author,
+        "editor" :  new_book.editor,
+    }
+    bookstore["books"].append(book)
     return new_book
 
 
@@ -79,13 +85,13 @@ def delete_book_data(book_id):
     Returns:
         None
     """
-    bookstore["books"] = [
-        book for book in bookstore["books"]
-        if not (book["id"] == book_id)
-    ]
+    for book in range(0,len(bookstore["books"])):
+        if bookstore["books"][book]["id"]==book_id:
+            bookstore["books"].pop(book)
+            return True
+    return None
 
-
-def update_book_data(book_id, updated_fields: dict) -> Book | None:
+def update_book_data(updated_fields: Book) -> Book | None:
     """
     Updates the fields of a book in the bookstore.
 
@@ -96,15 +102,11 @@ def update_book_data(book_id, updated_fields: dict) -> Book | None:
     Returns:
         Book | None: The updated book object if found and updated successfully, None otherwise.
     """
-    target_book = get_book_by_id(book_id)
     
-    if target_book is not None:
-        for key in updated_fields.keys():
-            target_book[key] = updated_fields[key]
-        
-        book_index = bookstore["books"].index(target_book)
-        bookstore["books"][book_index] = target_book
-        
-        return Book.model_validate(target_book)
-    else:
-        return None
+    for i, book in enumerate(bookstore["books"]):
+        if book["id"] == updated_fields.id :
+            book["name"] = updated_fields.name 
+            book["author"] = updated_fields.author
+            book["editor"] = updated_fields.editor
+            bookstore["books"][i] = book
+            return book

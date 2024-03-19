@@ -6,12 +6,14 @@ from uuid import uuid4
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import HTMLResponse
 from pydantic import ValidationError
-from app.schemas import books
+from app.schemas.books import Book
 import app.services.books as service
 from Templates import *
 from fastapi import Request
 from fastapi.templating import Jinja2Templates
 from typing import Optional
+from app.database import bookstore
+
 
 templates = Jinja2Templates(directory="Librairie\Templates")
 
@@ -28,10 +30,11 @@ def get_all_books(request: Request):
     Returns:
         JSONResponse: The response containing the list of all books.
     """
+    booknumber = str(len(bookstore["books"]))
     books = service.get_all_books()
     return templates.TemplateResponse(
         "all_books.html",
-        context={'request': request, 'books': books}
+        context={'request': request, 'books': books, 'booknumber': booknumber}
     )
 
 @router.get('/new')
@@ -67,7 +70,7 @@ def add_book(name: Annotated[str, Form()], author: Annotated[str, Form()], edito
         "editor": editor,
     }     
     try:
-        new_book = books.Book(**new_book_data)
+        new_book = Book.model_validate(new_book_data)
           
     except ValidationError as e:
         raise HTTPException(
@@ -78,9 +81,10 @@ def add_book(name: Annotated[str, Form()], author: Annotated[str, Form()], edito
     return RedirectResponse(url="/books/all", status_code=302)
 
 @router.get('/update/{id}', response_class=HTMLResponse)
-def update_book_form(request: Request):
+def update_book_form(request: Request, id : str):
+    book = service.get_book_by_id(id)
     try:
-        return templates.TemplateResponse("update_book.html", context={"request": request})
+        return templates.TemplateResponse("update_book.html", context={"request": request, "id" : book.id, "name": book.name, "author" : book.author, "editor": book.editor})
     except:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -88,42 +92,48 @@ def update_book_form(request: Request):
         )
 
 # Route pour traiter la soumission du formulaire de mise à jour du livre
-@router.post('/update/{id}', response_class=HTMLResponse)
+@router.post('/update/{id}')
 def update_book(id: str, name: Optional[str] = Form(None), author: Optional[str] = Form(None), editor: Optional[str] = Form(None)):
-    try:
-        book = service.get_book_by_id(id)
-    except:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="The book with the given id does not exist."
-        )
+
 
     # Vérifiez si au moins un des champs (name/author/editor) est fourni pour la mise à jour
     if name is None and author is None and editor is None:
         raise ValueError("At least one of the fields (name/author/editor) should be provided for updating.")
 
-    updated_fields = {}
-
+    update = {
+        "id" : id,
+        "name" : None,
+        "author" : None,
+        "editor" : None
+}
     if name is not None:
-        updated_fields["name"] = name
+        update["name"] = name
     if author is not None:
-        updated_fields["author"] = author
+        update["author"] = author
     if editor is not None:
-        updated_fields["editor"] = editor
+        update["editor"] = editor
 
-    service.update_book_data(id, updated_fields)
+    try :
+        updated_fields = Book.model_validate(update)
+    except  ValidationError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Wrong data in the form."
+        )
 
-    return RedirectResponse(url="/books/all")
+    service.update_book_data(updated_fields)
+
+    return RedirectResponse(url="/books/all", status_code=302)
 
 
 @router.get('/delete/{id}')
-def ask_to_delete_book(request : Request):
+def ask_to_delete_book(request : Request, id : str):
     return templates.TemplateResponse(
         "delete_book.html",
-        context={"request": request}
+        context={"request": request, "id" : id}
     )
 
-@router.post('/delete/{id}', response_class=HTMLResponse)
+@router.post('/delete/{id}')
 def delete_book(id: str ):
     """
     Deletes a book with the given id from the library.
@@ -137,4 +147,4 @@ def delete_book(id: str ):
         HTMLResponse: A HTML response indicating the success of the deletion operation.
     """
     service.delete_book_data(id)
-    return RedirectResponse(url="/books/all")
+    return RedirectResponse(url="/books/all", status_code=302)
