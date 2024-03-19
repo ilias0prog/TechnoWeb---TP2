@@ -2,18 +2,17 @@
 
 {% block content %}
 
-<h1>Supprimer un livre</h1>
+<h1>Etes vous sûr ?</h1>
 
-<p>Etes vous sûr ?</p>
-<form action="/books/delete" method="post">
+<form action="/books/delete/{{id}}" method="post">
     <div class="form-group">
-        <button type="submit">Oui</button>
+        <button class="btn btn-outline-success mx-4" type="submit">Oui</button>
     </div>
 </form>
 
 
 <div>
-    <a href="/books/all">Retour</a>
+    <a class="btn btn-outline-dark mx-2" href="/books/all">Retour</a>
 </div>
 
 {% endblock %}

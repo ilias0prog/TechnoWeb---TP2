@@ -1,21 +1,21 @@
 {% extends "empty_page.html" %}
-
 {% block content %}
-<form action="/books/update/{{book.id}}" method="post">
+<form action="/books/update/{{id}}" method="post">
+
     <div class="form-group">
         <label for="name">Name:</label><br>
-        <input type="text" id="name" name="name" value="{{ name }}"><br>
+        <input type="text" id="name" name="name" value="{{name}}"><br>
     </div>
     <div>
         <label for="author">Author:</label><br>
-        <input type="text" id="author" name="author" value="{{ author }}"><br>
+        <input type="text" id="author" name="author" value="{{author}}"><br>
     </div>
     <div>
         <label for="editor">Editor:</label><br>
-        <input type="text" id="editor" name="editor" value="{{ editor }}"><br>
+        <input type="text" id="editor" name="editor" value="{{editor}}"><br>
     </div>
     <div>
-        <input type="submit" value="Update Book">
+        <input class="btn btn-outline-success mx-4" type="submit" value="Confirm">
     </div>
 </form>
 

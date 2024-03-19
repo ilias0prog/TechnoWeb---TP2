@@ -1,6 +1,6 @@
 # Import necessary modules and classes
 from typing import Annotated
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi import APIRouter, HTTPException, status, Request, Form
 from uuid import uuid4
 from fastapi import APIRouter, HTTPException, status
@@ -78,10 +78,9 @@ def add_book(name: Annotated[str, Form()], author: Annotated[str, Form()], edito
     return RedirectResponse(url="/books/all", status_code=302)
 
 @router.get('/update/{id}', response_class=HTMLResponse)
-def update_book_form(request: Request, id: str):
+def update_book_form(request: Request):
     try:
-        book = service.get_book_by_id(id)
-        return templates.TemplateResponse("update_book.html", context={"request": request, "id": book.id, "name": book.name, "author": book.author, "editor": book.editor})
+        return templates.TemplateResponse("update_book.html", context={"request": request})
     except:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -90,9 +89,16 @@ def update_book_form(request: Request, id: str):
 
 # Route pour traiter la soumission du formulaire de mise à jour du livre
 @router.post('/update/{id}', response_class=HTMLResponse)
-def update_book(id: str , name: Optional[str] = Form(None), author: Optional[str] = Form(None), editor: Optional[str] = Form(None)):
-    
+def update_book(id: str, name: Optional[str] = Form(None), author: Optional[str] = Form(None), editor: Optional[str] = Form(None)):
+    try:
+        book = service.get_book_by_id(id)
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="The book with the given id does not exist."
+        )
 
+    # Vérifiez si au moins un des champs (name/author/editor) est fourni pour la mise à jour
     if name is None and author is None and editor is None:
         raise ValueError("At least one of the fields (name/author/editor) should be provided for updating.")
 
@@ -108,6 +114,7 @@ def update_book(id: str , name: Optional[str] = Form(None), author: Optional[str
     service.update_book_data(id, updated_fields)
 
     return RedirectResponse(url="/books/all")
+
 
 @router.get('/delete/{id}')
 def ask_to_delete_book(request : Request):
@@ -129,12 +136,5 @@ def delete_book(id: str ):
     Returns:
         HTMLResponse: A HTML response indicating the success of the deletion operation.
     """
-    try:
-        book = service.get_book_by_id(id)
-    except:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="The book with the given id does not exist."
-        )
     service.delete_book_data(id)
     return RedirectResponse(url="/books/all")
