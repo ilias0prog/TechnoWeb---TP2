@@ -11,7 +11,7 @@ import app.services.books as service
 from Templates import *
 from fastapi import Request
 from fastapi.templating import Jinja2Templates
-
+from typing import Optional
 
 templates = Jinja2Templates(directory="Librairie\Templates")
 
@@ -77,36 +77,36 @@ def add_book(name: Annotated[str, Form()], author: Annotated[str, Form()], edito
     service.save_book(new_book)  # Save the validated book
     return RedirectResponse(url="/books/all", status_code=302)
 
-
-@router.get('/update{id}', response_class=HTMLResponse)
+@router.get('/update/{id}', response_class=HTMLResponse)
 def update_book_form(request: Request, id: str):
-    book =  service.get_book_by_id(id)
-    return templates.TemplateResponse("update_book.html", context= {"request": request, "id": book.id, "name": book.name, "author": book.author, "editor": book.editor})
-
-@router.post('/update{id}', response_class=HTMLResponse)
-def update_book( id: str,name: Annotated[str, Form()], author: Annotated[str, Form()], editor: Annotated[str, Form()]):
     try:
         book = service.get_book_by_id(id)
+        return templates.TemplateResponse("update_book.html", context={"request": request, "id": book.id, "name": book.name, "author": book.author, "editor": book.editor})
     except:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="The book with the given id does not exist."
         )
 
-    if (name, author, editor) == (None, None, None):
+# Route pour traiter la soumission du formulaire de mise à jour du livre
+@router.post('/update/{id}', response_class=HTMLResponse)
+def update_book(id: str , name: Optional[str] = Form(None), author: Optional[str] = Form(None), editor: Optional[str] = Form(None)):
+    
+
+    if name is None and author is None and editor is None:
         raise ValueError("At least one of the fields (name/author/editor) should be provided for updating.")
 
-    service.check_input_validity(name, author, editor)
-    
-    updated_fields = {
-        "id": id,
-        "name": name,
-        "author": author,
-        "editor": editor
-    }
-    
-    service.update_book_data(updated_fields)
-    
+    updated_fields = {}
+
+    if name is not None:
+        updated_fields["name"] = name
+    if author is not None:
+        updated_fields["author"] = author
+    if editor is not None:
+        updated_fields["editor"] = editor
+
+    service.update_book_data(id, updated_fields)
+
     return RedirectResponse(url="/books/all")
 
 @router.get('/delete/{id}')

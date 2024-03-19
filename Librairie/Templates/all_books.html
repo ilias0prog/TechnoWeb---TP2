@@ -13,7 +13,7 @@
             <th>Editeur</th>
         </tr>
         {% for book in books %}
-        {{ show_book(book.name, book.author, book.editor) }}
+        {{ show_book(book.id,book.name, book.author, book.editor) }}
         {% endfor %}
     </table> 
 </div>
