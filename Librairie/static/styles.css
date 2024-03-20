@@ -6,24 +6,35 @@ body {
 }
 
 
-*{
-    background: #faf0ca !important;
+* {
+    background: #ffffff !important;
 }
 
-th{
+th {
     border: solid black 3px !important;
     text-align: center;
-    padding : 2% 5% 2% 5% !important;
+    padding: 2% 5% 2% 5% !important;
 }
 
-td{
+td {
     border: solid black;
     text-align: center !important;
-    margin : 0;
+    margin: 0;
     padding: 2% !important;
 }
 
-table{
+table {
+    border: solid black 10px !important;
     border-collapse: separate !important;
     border-spacing: 10% 0 !important;
+}
+
+.AreYouSure {
+    text-align: center !important;
+
+}
+
+.confirm_delete {
+    display: flex !important;
+    border-radius: 8px;
 }

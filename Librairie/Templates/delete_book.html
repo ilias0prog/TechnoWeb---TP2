@@ -2,11 +2,12 @@
 
 {% block content %}
 
-<h1>Etes vous sûr ?</h1>
+<h1 class="AreYouSure">Etes vous sûr ?</h1>
 
 <form action="/books/delete/{{id}}" method="post">
     <div class="form-group">
-        <button class="btn btn-outline-success mx-4" type="submit">Oui</button>
+        <!--<button class="btn btn-outline-success mx-4" type="submit">Oui</button>-->
+        <button class="confirm_delete" type="submit">Oui</button>
     </div>
 </form>
 
