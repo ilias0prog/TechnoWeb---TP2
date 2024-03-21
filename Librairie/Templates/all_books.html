@@ -2,7 +2,7 @@
 {% from "macro.html" import show_book %}
 
 {% block content %}
-
+<h1 class = "all_books_title">Our bookstore</h1>
 <div class="container">
     <table class="table">
         <tr>
@@ -18,12 +18,15 @@
     </table> 
 </div>
 
-<div> 
-    Nombre de livre : {{ booknumber }}
-</div>
 
-<div>
-    <a class="btn btn-outline-success mx-4" href="/books/new">Ajouter un nouveau livre</a>
+<div class="all_books_container">
+    <div class="nb_books"> 
+        Nombre de livre : {{ booknumber }}
+    </div>
+    
+    <div>
+        <a class="btn btn-outline-success mx-4" id="add_book_btn" href="/books/new">Ajouter un nouveau livre</a>
+    </div>
 </div>
 
 {% endblock %}

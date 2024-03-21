@@ -1,33 +1,112 @@
+/*Variables :*/
+element {
+    --main-bg-color: 14213D;
+}
+
+
+
 body {
     /* 1rem = 16px */
     padding: 6rem;
     font-family: Arial, Helvetica, sans-serif;
-    color: #000000;
+    background: #352208 !important;
 }
-
 
 * {
-    background: #ffffff !important;
+    background-color: #352208 !important;
+    color: #E5E5E5 !important;
+
 }
 
-th {
-    border: solid black 3px !important;
+/*All books part*/
+
+.all_books_title {
+    padding-top: 2vh;
+    padding-bottom: 2vh;
     text-align: center;
+    color: #E5E5E5;
+}
+
+.container {}
+
+th {
+    font-size: larger;
+    border-width: 1px !important;
+    text-align: center !important;
     padding: 2% 5% 2% 5% !important;
 }
 
 td {
-    border: solid black;
     text-align: center !important;
+    vertical-align: middle;
+    border-width: 0 !important;
     margin: 0;
     padding: 2% !important;
+    margin: 10% !important;
 }
 
 table {
-    border: solid black 10px !important;
     border-collapse: separate !important;
-    border-spacing: 10% 0 !important;
+    padding: 3px;
+    border-radius: 20px;
 }
+
+a {
+    padding: 20px !important;
+    border-radius: 15px !important;
+}
+
+#all_books_modif_btn {
+    background-color: #945f1521 !important;
+    border: solid white 0.5px !important;
+    box-shadow: 4.0px 8.0px 8.0px hsl(0deg 0% 0% / 0.30);
+    padding: 20px !important;
+    border-radius: 15px !important;
+}
+
+#all_books_del_btn {
+    background-color: #945f1521 !important;
+    border: solid white 0.5px !important;
+    box-shadow: 4.0px 8.0px 8.0px hsl(0deg 0% 0% / 0.20);
+    padding: 20px !important;
+    border-radius: 15px !important;
+}
+
+#add_book_btn {
+    margin: 0;
+    float: left;
+    transform: translateX(3vw);
+    background-color: #945f1521 !important;
+    box-shadow: 4.0px 8.0px 8.0px hsl(0deg 0% 0% / 0.20);
+    border: solid white 0.5px !important;
+    border-radius: 70px !important;
+    padding-right: 4vw !important;
+    padding-left: 4vw !important;
+
+}
+
+
+.all_books_container {
+    display: flexbox;
+    align-items: flex-end;
+    text-align: center;
+}
+
+.nb_books {
+    margin: 0;
+    text-align: center;
+    padding: 20px 1vw 20px 1vw;
+    border: solid white 2px;
+    border-radius: 70px;
+    position: relative;
+    float: right;
+    transform: translateX(-21.5vw);
+    background-color: #945f1521 !important;
+    border: solid white 0.5px !important;
+    box-shadow: 4.0px 8.0px 8.0px hsl(0deg 0% 0% / 0.20);
+}
+
+/*Delete part*/
 
 .AreYouSure {
     text-align: center !important;

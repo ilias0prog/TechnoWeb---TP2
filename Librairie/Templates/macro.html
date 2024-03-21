@@ -1,11 +1,11 @@
 {% macro show_book(id,name, author, editor) %}
     <tr>
         <td>
-            <a class="btn btn-outline-dark mx-2" href="/books/update/{{ id }}">Modifier</a>
+            <a class="btn btn-outline-dark mx-2" id="all_books_modif_btn" href="/books/update/{{ id }}">Modifier</a>
         </td>
 
         <td>
-        <a class="btn btn-outline-dark mx-2" href="/books/delete/{{ id }}">Supprimer</a>
+        <a class="btn btn-outline-dark mx-2" id = "all_books_del_btn" href="/books/delete/{{ id }}">Supprimer</a>
 
         </td>
 
