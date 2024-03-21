@@ -2,9 +2,9 @@
 
 {% block content %}
 
-<h1>Ajouter un nouveau livre</h1>
+<h1 class="title">Ajouter un nouveau livre</h1>
 
-<form action="/books/new" method="post">
+<form class="formulaire" action="/books/new" method="post">
 
     <div class="form-group">
         <label for="book_name">Titre du livre</label>
@@ -24,7 +24,7 @@
     </div>
 
 
-    <button type="submit" class="btn btn-success my-4" href="/books/all">Ajouter le livre</button>
+    <button type="submit" class="btn btn-success my-4" id="confirm_btn" href="/books/all">Ajouter le livre</button>
 
 </form>
 

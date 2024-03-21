@@ -1,6 +1,9 @@
 {% extends "empty_page.html" %}
 {% block content %}
-<form action="/books/update/{{id}}" method="post">
+
+<h1 class="title">Modifier le livre</h1>
+
+<form class="formulaire" action="/books/update/{{id}}" method="post">
 
     <div class="form-group">
         <input type="hidden">
@@ -10,7 +13,7 @@
         <input type="text" class="form-control" placeholder="{{name}}"  name="author" value="{{author}}"><br>
         <label for="editor">Editor:</label><br>
         <input type="text" class="form-control" placeholder="{{name}}"  name="editor" value="{{editor}}"><br>
-        <input class="btn btn-outline-success mx-4" type="submit" value="Confirm">
+        <input class="btn btn-outline-success mx-4" id="confirm_btn" type="submit" value="Confirm">
     </div>
 </form>
 
